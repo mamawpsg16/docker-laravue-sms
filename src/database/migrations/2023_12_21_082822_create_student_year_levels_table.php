@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('student_id')->constrained();
             $table->foreignId('school_year_id')->constrained();
             $table->foreignId('level_id')->constrained();
-            $table->string('created_by');
-            $table->string('updated_by');
+            $table->string('created_by',100);
+            $table->string('updated_by',100);
             $table->timestamps();
 
             $table->index('student_id');

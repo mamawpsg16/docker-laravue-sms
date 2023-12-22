@@ -1,12 +1,11 @@
 <template>
-    <div>
-        <p class="fw-bold">SHEESH</p>
-    </div>
+    <router-link :to="{ name:'registration-index'}" >Registration</router-link>
+    <router-view></router-view>
 </template>
 
 <script>
     export default {
-        name:'App'
+        name:'App',
     }
 </script>
 

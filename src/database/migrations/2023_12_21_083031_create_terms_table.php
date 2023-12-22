@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('terms', function (Blueprint $table) {
             $table->id();
             $table->foreignId('school_year_id')->constrained();
-            $table->string('name');
+            $table->string('name',100);
             $table->integer('term');
             $table->date('start_date');
             $table->date('end_date');
-            $table->string('created_by');
-            $table->string('updated_by');
+            $table->string('created_by',100);
+            $table->string('updated_by',100);
             $table->timestamps();
 
             $table->index('name');

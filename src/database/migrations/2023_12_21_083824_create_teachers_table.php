@@ -15,15 +15,15 @@ return new class extends Migration
             $table->id();
             $table->foreignId('gender_id')->constrained();
             $table->foreignId('department_id')->nullable()->constrained();
-            $table->string('email')->unique();
-            $table->string('first_name');
-            $table->string('middle_name')->nullable();
-            $table->string('last_name');
+            $table->string('email',100)->unique();
+            $table->string('first_name',100);
+            $table->string('middle_name',100)->nullable();
+            $table->string('last_name',100);
             $table->date('date_of_birth');
-            $table->string('phone_number_1');
-            $table->string('phone_number_2')->nullable();
-            $table->string('created_by');
-            $table->string('updated_by');
+            $table->string('phone_number_1',15);
+            $table->string('phone_number_2',15)->nullable();
+            $table->string('created_by',100);
+            $table->string('updated_by',100);
             $table->timestamps();
 
             $table->index('gender_id');

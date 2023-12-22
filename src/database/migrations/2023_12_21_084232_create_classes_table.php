@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('teacher_id')->nullable()->constrained();
             $table->foreignId('classroom_id')->nullable()->constrained();
-            $table->string('name')->unique();
-            $table->string('created_by');
-            $table->string('updated_by');
+            $table->string('name',100)->unique();
+            $table->string('created_by',100);
+            $table->string('updated_by',100);
             $table->timestamps();
 
             $table->index('name');

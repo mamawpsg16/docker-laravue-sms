@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('guardian_types', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('created_by');
-            $table->string('updated_by');
+            $table->string('name',100);
+            $table->string('created_by',100);
+            $table->string('updated_by',100);
             $table->timestamps();
 
             $table->index('name');
