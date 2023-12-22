@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('school_years', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('name',100)->unique();
             $table->date('start_date');
             $table->date('end_date');
-            $table->string('created_by');
-            $table->string('updated_by');
+            $table->string('created_by',100);
+            $table->string('updated_by',100);
             $table->timestamps();
 
 

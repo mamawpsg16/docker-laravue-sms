@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('levels', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('name',100)->unique();
             $table->integer('order')->unique();
-            $table->string('created_by');
-            $table->string('updated_by');
+            $table->string('created_by',100);
+            $table->string('updated_by',100);
             $table->timestamps();
 
             $table->index('name');
