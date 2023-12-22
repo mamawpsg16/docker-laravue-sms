@@ -103,7 +103,12 @@
                 <div class="row mb-3">
                     <div class="col-4 mb-3">
                         <label>Gender <span class="text-danger">*</span></label>
-                        <VueMultiselect v-model="selectedGender" track-by="label" label="label" placeholder="Select Gender" :allow-empty="false" :options="options"></VueMultiselect>
+                        <VueMultiselect v-model="student.gender" :class="{ 'is-invalid': v$.student.gender.$dirty && (v$.student.gender.required.$invalid) }" track-by="label" label="label" placeholder="Select Gender" :allow-empty="false" :options="options"></VueMultiselect>
+                        <div  v-if="v$.student.gender.$dirty" :class="{ 'invalid-feedback':(v$.student.gender.required.$invalid )}">
+                            <p v-if="v$.student.gender.required.$invalid">
+                                Gender is required.
+                            </p>
+                        </div>
                     </div>
                     <div class="col-4  mb-3">
                         <label>Date of Birth <span class="text-danger">*</span></label>
@@ -156,13 +161,14 @@ import VueMultiselect from 'vue-multiselect'
                     phone_number_1:null,
                     phone_number_2:null,
                     date_of_birth:null,
+                    gender:null
                 },
                 options: [
                     { label: 'Male', value: 1 },
                     { label: 'Female', value: 2 },
                     { label: 'Others', value: 3 },
                 ],
-                selectedGender:null
+                
             }
         },
         validations () {
@@ -172,7 +178,8 @@ import VueMultiselect from 'vue-multiselect'
                     last_name: { required },
                     email: { required, email },
                     phone_number_1: { required, maxLength: maxLength(13), minLength: minLength(11) },
-                    date_of_birth: { required }
+                    date_of_birth: { required },
+                    gender: { required },
                 }
             }
         },
