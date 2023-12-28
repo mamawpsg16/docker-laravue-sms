@@ -17,7 +17,7 @@
         </p>
     </div> -->
     
-    <div class="form-floating mb-3" :class="dynamicClasses">
+    <div class="form-floating mb-3" :class="classes">
         <input :type="type" :value="modelValue" class="form-control" @input="$emit('update:modelValue', $event.target.value)" :class="isInvalid" v-bind="$attrs"/>
         <label for="floatingInput">{{ label }} <span class="text-danger">*</span></label>
     </div>
@@ -34,7 +34,7 @@ export default {
         type:String,
         required:true
     },
-    isInvalid: {
+    classes: {
       type: Object,
       default: () => ({})
     }

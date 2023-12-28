@@ -19,6 +19,9 @@ return new class extends Migration
             $table->foreignId('classroom_id')->nullable()->constrained();
             $table->time('period_start')->nullable();
             $table->time('period_end')->nullable();
+            $table->boolean('active')->default(true);
+            $table->string('created_by',100);
+            $table->string('updated_by',100);
             $table->timestamps();
 
             $table->index('teacher_id');

@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\App\SpaController;
+use App\Http\Controllers\App\AuthenticationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +15,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/{any}', function(){
-    return view('app');
-})->where('any', '^(?!api).*$');
+Route::post('/login',[AuthenticationController::class,'authenticate']);
+Route::get("/pwd", function(){
+   dd(bcrypt('qweqweqwe'));
+});
+Route::get('/{any}',SpaController::class)->where('any', '^(?!api).*$');

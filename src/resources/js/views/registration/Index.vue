@@ -51,22 +51,21 @@ import Dataset from '@/components/Dataset/Index.vue';
             return{
                 isExportAll:false,
                 data:[
-                    {
-                        first_name:'Kevin',
-                        birth_date: formatDate(undefined,'01-01-2001','date')
-                    },
-                    {
-                        first_name:'Jep',
-                        birth_date:formatDate(undefined,'02-02-2001','date')
-                    },
-                    {
-                        first_name:'Rojenson',
-                        birth_date:formatDate(undefined,'03-03-2001','date')
-                    }
+                  
                 ],
                 columns:[
                     {
-                        name:'First Name',
+                        name:'Name',
+                        field:'first_name',
+                        sort:''
+                    },
+                    {
+                        name:'Class',
+                        field:'first_name',
+                        sort:''
+                    },
+                    {
+                        name:'Section',
                         field:'first_name',
                         sort:''
                     },
@@ -75,7 +74,8 @@ import Dataset from '@/components/Dataset/Index.vue';
                         field:'birth_date',
                         sort:''
                     }
-                ]
+                ],
+                auth_token: `Bearer ${localStorage.getItem('auth-token')}`
             }
         },
         components: {
@@ -84,40 +84,24 @@ import Dataset from '@/components/Dataset/Index.vue';
             Create
         },
         async created(){
+            this.students();
         },
         methods:{
-            uploadImage(e){
-                // e.preventDefault()
-                const file = e.target.files[0];
-                this.file = file;
-                if (file) {
-                    // Use FileReader to read the file as a data URL
-                    const reader = new FileReader();
-                    reader.onload = () => {
-                        this.image = reader.result; // Set the imageUrl to the data URL
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    this.image = this.image1; // Reset imageUrl if no file is selected
-                }
-            },
-
-            saveProduct(){
-                const formData = new FormData();
-                formData.append('image',this.file);
-                // formData.append('product',this.product);
-                axios.post('/api/product',formData,{
-                    headers:{
-                        auth_token
+            async students(){
+                await axios.get('/api/registrations', { 
+                    headers: {
+                        Authorization: this.auth_token
                     }
                 })
-                .then(function (response) {
-                    console.log(response);
+                .then((response) => {
+                    const { students } = response.data;
+                    console.log(students, response);
+
                 })
-                .catch(function (error) {
-                    console.log(error);
+                .catch((error) =>{
+                    console.log(error,'ERROR');
                 });
-            }
+            },
         },
     }
 </script>

@@ -8,6 +8,10 @@ export default {
             type:{
                 type:String,
                 default:'text'
+            },
+            classes: {
+                type: Object,
+                default: () => ({})
             }
         },
   emits: ['update:modelValue']
