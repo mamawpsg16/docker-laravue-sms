@@ -15,8 +15,8 @@ return new class extends Migration
                 $table->id();
                 $table->string('name',100)->unique();
                 $table->boolean('active')->default(true);
-                $table->string('created_by');
-                $table->string('updated_by');
+                $table->string('created_by')->nullable();
+                $table->string('updated_by')->nullable();
                 $table->timestamps();
 
                 $table->index('name');

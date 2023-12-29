@@ -3,34 +3,35 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\StudentRegistration;
-use App\Service\StudentRegistrationService;
-use App\Http\Requests\StudentRegistrationRequest;
+use App\Models\Student;
+use App\Service\StudentService;
+use App\Http\Requests\StudentRequest;
 
-class StudentRegistrationController extends Controller
+class StudentController extends Controller
 {
     private $service;
     public function __construct(){
-            $this->service = new StudentRegistrationService();
+            $this->service = new StudentService();
     }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $students = StudentRegistration::get()->toArray();
+        $students = Student::get()->toArray();
         return response(['students' => $students]);        
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StudentRegistrationRequest $request)
+    public function store(StudentRequest $request)
     {
         // Retrieve the validated input data...
         $data = $request->validated();
 
-        $this->service->store($data);
+        $student = $this->service->store($data);
+        dd($student);
     }
 
     /**

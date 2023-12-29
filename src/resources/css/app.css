@@ -3,3 +3,6 @@
 body {
     font-family: 'Roboto', sans-serif !important;
 }
+#nprogress .bar {
+    height:4px;
+}

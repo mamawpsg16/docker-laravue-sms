@@ -10,6 +10,8 @@ class SchoolYear extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id'];
+
     public function scopeActive(Builder $query): void
     {
         $query->where('active', 1);

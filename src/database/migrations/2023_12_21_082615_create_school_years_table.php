@@ -17,8 +17,8 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date');
             $table->boolean('active')->default(true);
-            $table->string('created_by',100);
-            $table->string('updated_by',100);
+            $table->string('created_by',100)->nullable();
+            $table->string('updated_by',100)->nullable();
             $table->timestamps();
 
 

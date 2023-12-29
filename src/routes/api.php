@@ -6,7 +6,7 @@ use App\Http\Controllers\GenderController;
 use App\Http\Controllers\SchoolYearController;
 use App\Http\Controllers\GuardianTypeController;
 use App\Http\Controllers\App\AuthenticationController;
-use App\Http\Controllers\StudentRegistrationController;
+use App\Http\Controllers\StudentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,7 +24,7 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::apiResources([
         'genders' => GenderController::class,
         'guardian-types' => GuardianTypeController::class,
-        'registrations' => StudentRegistrationController::class,
+        'student-registration' => StudentController::class,
         'school-years' => SchoolYearController::class,
     ]);
     Route::get('/genderOptions', [GenderController::class,'getGenders']);

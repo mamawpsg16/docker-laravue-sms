@@ -23,8 +23,8 @@ return new class extends Migration
             $table->string('phone_number_1',15);
             $table->string('phone_number_2',15)->nullable();
             $table->boolean('active')->default(true);
-            $table->string('created_by',100);
-            $table->string('updated_by',100);
+            $table->string('created_by',100)->nullable();
+            $table->string('updated_by',100)->nullable();
             $table->timestamps();
 
             $table->index('gender_id');

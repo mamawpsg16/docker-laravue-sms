@@ -18,8 +18,8 @@ return new class extends Migration
             $table->foreignId('class_id')->nullable()->constrained();
             $table->enum('status', ['Pending', 'Assessment', 'Approved'])->default('Pending');
             $table->date('date')->nullable();
-            $table->string('created_by',100);
-            $table->string('updated_by',100);
+            $table->string('created_by',100)->nullable();
+            $table->string('updated_by',100)->nullable();
             $table->timestamps();
 
             $table->index('student_id');

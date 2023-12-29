@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             GenderSeeder::class,
             GuardianTypeSeeder::class,
             SchoolYearSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }

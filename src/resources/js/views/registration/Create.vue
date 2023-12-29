@@ -389,7 +389,6 @@ import VueMultiselect from 'vue-multiselect'
            
         },
         async created(){
-            console.log('CREATED');
             await this.getSchoolYears()
             await this.getGenderOptions()
             await this.getGuardianTypes()
@@ -468,21 +467,24 @@ import VueMultiselect from 'vue-multiselect'
             },
 
             validateStudentDetails(){
-                this.v$.student.$touch()
-                const isValid =  this.v$.student.$errors.length ? false : true ;
-                return isValid;
+                // this.v$.student.$touch()
+                // const isValid =  this.v$.student.$errors.length ? false : true ;
+                // return isValid;
+                return true;
             },
 
             validateGuardianDetails(){
-                this.v$.guardians.$touch()
-                const isValid =  this.v$.guardians.$errors.length ? false : true ;
-                return isValid;
+                // this.v$.guardians.$touch()
+                // const isValid =  this.v$.guardians.$errors.length ? false : true ;
+                // return isValid;
+                return true;
             },
 
             validateAddressDetails(){
-                this.v$.address_information.$touch()
-                const isValid =  this.v$.address_information.$errors.length ? false : true ;
-                return isValid;
+                // this.v$.address_information.$touch()
+                // const isValid =  this.v$.address_information.$errors.length ? false : true ;
+                // return isValid;
+                return true;
             },
 
             uploadImage(e){
@@ -516,17 +518,50 @@ import VueMultiselect from 'vue-multiselect'
                 this.guardians.splice(index, 1);
             },
             
-            register(){
+            async register(){
+                // if(!await this.v$.$validate()){
+                //     return;
+                // }
                 const formData = new FormData();
+
                 if(this.student.file){
                     formData.append('student_image',this.student.file);
                 }
-                formData.append('student_information',JSON.stringify(this.student));
-                formData.append('guardians', JSON.stringify(this.guardians));
+                const date_of_birth = new Date(this.student.date_of_birth);
+
+                // Ensure the month and day are formatted with leading zeros if needed
+                const formattedMonth = String(date_of_birth.getMonth() + 1).padStart(2, '0');
+                const formattedDay = String(date_of_birth.getDate()).padStart(2, '0');
+                // Format the date as 'YYYY-MM-DD'
+                const formattedDate = `${date_of_birth.getFullYear()}-${formattedMonth}-${formattedDay}`;
+
+                const student = {
+                    ...this.student,
+                    gender_id: this.student.gender.value,
+                    school_year_id: this.student.school_year.value,
+                    date_of_birth: formattedDate, // Assign the formatted date string
+                };
+
+
+                delete student.gender;
+                delete student.school_year;
+
+                const guardians = this.guardians.map(guardian =>{
+                    const { guardian_type, ...rest } = guardian; // Destructure guardian_type and capture the rest of the properties
+                    return {
+                        ...rest, // Spread the rest of the properties
+                        guardian_type_id: guardian_type.value // Add the new property
+                    };
+                });
+                
+                formData.append('student_information',JSON.stringify(student));
+
+                formData.append('guardians', JSON.stringify(guardians));
+
                 formData.append('address_information', JSON.stringify(this.address_information));
                 formData.append('health_information',JSON.stringify(this.health_information));
 
-                axios.post('/api/registrations',formData,{
+                axios.post('/api/student-registration',formData,{
                     headers:{
                         Authorization: this.auth_token
                     }

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StudentRegistrationRequest extends FormRequest
+class StudentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,15 +29,15 @@ class StudentRegistrationRequest extends FormRequest
             'student_information.last_name' => 'required',
             'student_information.phone_number_1' => ['required','min:11', 'max:13'],
             'student_information.date_of_birth' => 'required',
-            'student_information.gender' => 'required',
-            'student_information.school_year' => 'required',
+            'student_information.gender_id' => 'required',
+            'student_information.school_year_id' => 'required',
 
             'guardians' => ['required','array'],
             'guardians.*.first_name' => 'required',
             'guardians.*.last_name' => 'required',
             'guardians.*.email' => ['required', 'email'],
             'guardians.*.phone_number_1' => ['required','min:11', 'max:13'],
-            'guardians.*.guardian_type' => 'required',
+            'guardians.*.guardian_type_id' => 'required',
 
             'address_information' => ['required','array'],
             'address_information.address' => 'required',
