@@ -16,12 +16,25 @@ let defaultConfig = {
     },
 };
 
-const baseSwal = function (config = null) {
-    Swal.fire(config ?? defaultConfig);
-};
+let confirmationConfig = {
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!"
+}
 
-const swalSuccess = function (config) {
-    const configOptions = { ...defaultConfig, ...config };
+let successDefaultConfig = {
+    icon: "success",
+    title: "Successfully save!"
+}
+
+const swalSuccess = function (config = null) {
+    const swal_config = config ?? successDefaultConfig;
+    const configOptions = { ...defaultConfig, ...swal_config };
+    console.log(configOptions);
     Swal.fire(configOptions);
 };
 
@@ -30,15 +43,16 @@ const swalError = function (config) {
     Swal.fire(configOptions);
 };
 
-const swalConfirmation = function (config) {
-    const configOptions = { ...defaultConfig, ...config };
-    Swal.fire(configOptions).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire("Saved!", "", "success");
-        } else if (result.isDenied) {
-            Swal.fire("Changes are not saved", "", "info");
-        }
+const swalConfirmation = function (config = null) {
+    const configOptions = config ?? confirmationConfig;
+    
+    return new Promise((resolve) => {
+        Swal.fire(configOptions).then((result) => {
+            resolve(result);
+        });
     });
 };
 
-export { swalSuccess, swalError, Swal };
+const SwalDefault = Swal;
+
+export { swalSuccess, swalError, swalConfirmation, SwalDefault };

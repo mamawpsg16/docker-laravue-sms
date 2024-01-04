@@ -27,3 +27,7 @@ export const formatCurrency = function (locale =undefined, amount = '0.00',  opt
     const style = Object.keys(options).length === 0  ? numberDefaultOptions : {...numberDefaultOptions, ...options};
     return new Intl.NumberFormat(locale,style).format(amount)
 }
+
+export const titleCase = function(word){
+    return word ? word.charAt(0).toUpperCase() + word.slice(1) : '';
+}

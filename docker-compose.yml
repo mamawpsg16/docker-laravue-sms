@@ -5,6 +5,7 @@ version: '3'
 services:
   web:
     build: ./nginx
+    restart: always
     volumes:
       - ./src:/var/www/html      
     ports:

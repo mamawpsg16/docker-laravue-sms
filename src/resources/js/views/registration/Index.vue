@@ -1,5 +1,6 @@
 <template>
     <Create/>
+    <Show :student_id="student_id"/>
     <div class="row">
         <div class="col-10 mx-auto my-2">
             <div class="d-flex justify-content-between mb-2">
@@ -26,8 +27,12 @@
             <Dataset :data="data" :columns="columns">
                 <template #body="{ data, index }">
                     <tr>
-                        <td>{{ data.first_name }}</td>
-                        <td>{{ data.birth_date }}</td>
+                        <td>{{ data.name }}</td>
+                        <td>{{ data.date_of_birth }}</td>
+                        <td>{{ data.gender }}</td>
+                        <td>{{ data.school_year }}</td>
+                        <td>{{ data.enrollment_status }}</td>
+                        <td class="text-center"><button class="btn btn-sm btn-primary" @click="viewStudentDetails(data.id)"><i class="fa-solid fa-eye"></i></button></td>
                     </tr>
                 </template>
             </Dataset>
@@ -37,10 +42,11 @@
 
 <script>
 import Create from './Create.vue';
+import Show from './Show.vue';
 // import Show from './Show.vue';
 // import image1 from '../../../assets/images/1.png'
 import Modal from '@/components/Modal/modal.vue';
-import { formatDate, formatCurrency } from '@/helpers/Formatter/index.js';
+import { formatDate, formatCurrency,titleCase } from '@/helpers/Formatter/index.js';
 // import { swalSuccess, swalError, Swal } from '@/composables/sweetAlert.js';
 import axios from 'axios';
 import Dataset from '@/components/Dataset/Index.vue';
@@ -50,58 +56,85 @@ import Dataset from '@/components/Dataset/Index.vue';
         data(){
             return{
                 isExportAll:false,
-                data:[
-                  
-                ],
+                data:[],
                 columns:[
                     {
                         name:'Name',
-                        field:'first_name',
-                        sort:''
-                    },
-                    {
-                        name:'Class',
-                        field:'first_name',
-                        sort:''
-                    },
-                    {
-                        name:'Section',
-                        field:'first_name',
+                        field:'name',
                         sort:''
                     },
                     {
                         name:'Birth Date',
-                        field:'birth_date',
+                        field:'date_of_birth',
+                        sort:''
+                    },
+                    {
+                        name:'Gender',
+                        field:'gender',
+                        sort:''
+                    },
+                    {
+                        name:'School Year',
+                        field:'school_year',
+                        sort:''
+                    },
+                    {
+                        name:'Enrollment Status',
+                        field:'enrollment_status',
+                        sort:''
+                    },
+                    {
+                        name:'Action',
+                        field:'',
                         sort:''
                     }
                 ],
+                student_id:null,
                 auth_token: `Bearer ${localStorage.getItem('auth-token')}`
             }
         },
         components: {
             Dataset,
             Modal,
-            Create
+            Create,
+            Show
         },
         async created(){
-            this.students();
+            await this.students();
         },
         methods:{
             async students(){
-                await axios.get('/api/registrations', { 
+                await axios.get('/api/student', { 
                     headers: {
                         Authorization: this.auth_token
                     }
                 })
                 .then((response) => {
                     const { students } = response.data;
-                    console.log(students, response);
+                    const data = students?.map(student=>{
+                        const middle_name = student.middle_name ? `${ titleCase(student.middle_name)}.` : '';
+                        return {
+                            ...student,
+                            name: `${ titleCase(student.first_name)} ${middle_name} ${ titleCase(student.last_name) }`,
+                            date_of_birth: formatDate(undefined, student.date_of_birth, 'date'),
+                            gender: student.gender.name,
+                            school_year: student.enrollments[0].school_year.name,
+                            enrollment_status: student.enrollments[0].status
+                        }
+                    });
 
-                })
-                .catch((error) =>{
+                    this.data = data;
+                }).catch((error) =>{
                     console.log(error,'ERROR');
                 });
             },
+
+            viewStudentDetails(student_id){
+                const id = document.getElementById('student-details-modal');
+                const modal = bootstrap.Modal.getOrCreateInstance(id);
+                this.student_id = student_id; 
+                modal.show();
+            }
         },
     }
 </script>

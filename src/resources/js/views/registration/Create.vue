@@ -1,8 +1,7 @@
 <template>
     <Modal class="modal-xl" targetModal="student-registration-modal" modaltitle="Registration" :backdrop="true" :escKey="false">
-        Student Registration
         <template #body>
-            <form-wizard @on-complete="register" finishButtonText="Register" ref="formWizard" subtitle="Student Registration" :validateOnBack="true" color="#3176FF">
+            <form-wizard @on-complete="registerConfirmation" finishButtonText="Register" ref="formWizard" subtitle="Student Registration" :validateOnBack="true" color="#3176FF">
                 <tab-content title="Student Information" icon="fa-solid fa-user" :beforeChange="validateStudentDetails">
                     <div class="row mb-3">
                         <div class="d-flex flex-column align-items-center text-end">
@@ -212,8 +211,14 @@
                         </div>
                         <div class="col-4">
                             <label>Blood Type</label>
-                            <Input type="text" v-model="health_information.blood_type" />
+                            <Input type="text" v-model="health_information.blood_type" :class="{ inputInvalidClass : checkInputValidity('health_information','blood_type',['maxLength']) }"/>
+                            <div  v-if="v$.health_information.blood_type.$dirty" :class="{ 'text-danger':  checkInputValidity('health_information','blood_type',['maxLength'])}">
+                                <p v-if="v$.health_information.blood_type.maxLength.$invalid">
+                                    Blood Type must be no more than 5 characters.
+                                </p>
+                            </div>
                         </div>
+                        
                     </div>
                     <div class="row mb-3">
                         <div class="col-4">
@@ -254,10 +259,11 @@ import VueDatePicker from '@vuepic/vue-datepicker';
 import { useVuelidate } from '@vuelidate/core'
 import { required, email, maxLength, minLength } from '@vuelidate/validators';
 import defaultProfile from '../../../../public/storage/default_images/profile.png';
+import { swalConfirmation, swalSuccess, swalError, SwalDefault } from '@/helpers/Notification/sweetAlert.js';
 import { checkValidity, checkLoopValidity, checkLoopErrors } from '@/helpers/Vuelidate/InputValidation.js';
 import VueMultiselect from 'vue-multiselect'
     export default {
-        name:'Registration Create',
+        name:'Student Registration',
         setup () {
             return { v$: useVuelidate({ $autoDirty: true ,student: {} }) }
         },
@@ -266,6 +272,7 @@ import VueMultiselect from 'vue-multiselect'
                 defaultProfileImage: defaultProfile,
                 loadingWizard: false,
                 image:null,
+                file:null,
                 student:{
                     first_name:null,
                     middle_name:null,
@@ -276,8 +283,8 @@ import VueMultiselect from 'vue-multiselect'
                     date_of_birth:null,
                     gender:null,
                     school_year:null,
-                    file:null
                 },
+                exportLoading:false,
                 genders:[],
                 relationships:[],
                 school_years:[],
@@ -375,6 +382,9 @@ import VueMultiselect from 'vue-multiselect'
                     contact_person: { required },
                     phone_number: { required,  maxLength: maxLength(13), minLength: minLength(11) }
                 },
+                health_information: {
+                    blood_type: { maxLength: maxLength(5)}
+                },
             }
         },
         components:{
@@ -451,7 +461,7 @@ import VueMultiselect from 'vue-multiselect'
             },
 
             removeImage(){
-                this.student.file = null;
+                this.file = null;
                 this.image = null;
             },
             checkInputValidity(parentProperty = null, dataProperty, validations = []) {
@@ -467,30 +477,27 @@ import VueMultiselect from 'vue-multiselect'
             },
 
             validateStudentDetails(){
-                // this.v$.student.$touch()
-                // const isValid =  this.v$.student.$errors.length ? false : true ;
-                // return isValid;
-                return true;
+                this.v$.student.$touch()
+                const isValid =  this.v$.student.$errors.length ? false : true ;
+                return isValid;
             },
 
             validateGuardianDetails(){
-                // this.v$.guardians.$touch()
-                // const isValid =  this.v$.guardians.$errors.length ? false : true ;
-                // return isValid;
-                return true;
+                this.v$.guardians.$touch()
+                const isValid =  this.v$.guardians.$errors.length ? false : true ;
+                return isValid;
             },
 
             validateAddressDetails(){
-                // this.v$.address_information.$touch()
-                // const isValid =  this.v$.address_information.$errors.length ? false : true ;
-                // return isValid;
-                return true;
+                this.v$.address_information.$touch()
+                const isValid =  this.v$.address_information.$errors.length ? false : true ;
+                return isValid;
             },
 
             uploadImage(e){
-                // e.preventDefault()
+                e.preventDefault()
                 const file = e.target.files[0];
-                this.student.file = file;
+                this.file = file;
                 if (file) {
                     // Use FileReader to read the file as a data URL
                     const reader = new FileReader();
@@ -511,21 +518,68 @@ import VueMultiselect from 'vue-multiselect'
                     phone_number_2:null,
                     guardian_type:null,
                 });
-                
             },
 
             deleteGuardian(index) {
                 this.guardians.splice(index, 1);
             },
-            
+
+            formReset(){
+                this.image = null;
+                this.file = null;
+                this.student ={
+                    first_name:null,
+                    middle_name:null,
+                    last_name:null,
+                    email:null,
+                    phone_number_1:null,
+                    phone_number_2:null,
+                    date_of_birth:null,
+                    gender:null,
+                    school_year:null,
+                };
+                this.guardians =[
+                    {
+                        first_name:null,
+                        middle_name:null,
+                        last_name:null,
+                        email:null,
+                        phone_number_1:null,
+                        phone_number_2:null,
+                        guardian_type:null,
+                    }
+                ];
+                this.address_information = {
+                    address:null,
+                    landmark:null,
+                    contact_person:null,
+                    phone_number:null,
+                };
+                this.health_information = {
+                    height:null,
+                    weight:null,
+                    blood_type:null,
+                    allergies:null,
+                    medications:null,
+                    emergency_contact_person:null,
+                    emergency_contact_number:null,
+                    last_checkup:null,
+                };
+                this.$refs.formWizard.reset();
+                this.v$.$reset();
+            },
+
             async register(){
-                // if(!await this.v$.$validate()){
-                //     return;
-                // }
+                if(!await this.v$.$validate()){
+                    return;
+                }
+
+                this.exportLoading = true;
+
                 const formData = new FormData();
 
-                if(this.student.file){
-                    formData.append('student_image',this.student.file);
+                if(this.file){
+                    formData.append('image',this.file);
                 }
                 const date_of_birth = new Date(this.student.date_of_birth);
 
@@ -560,23 +614,57 @@ import VueMultiselect from 'vue-multiselect'
 
                 formData.append('address_information', JSON.stringify(this.address_information));
                 formData.append('health_information',JSON.stringify(this.health_information));
-
-                axios.post('/api/student-registration',formData,{
+               
+                axios.post('/api/student',formData,{
                     headers:{
-                        Authorization: this.auth_token
+                        Authorization: this.auth_token,
                     }
                 })
-                .then(function (response) {
-                    console.log(response);
+                .then((response) => {
+                    SwalDefault.fire({
+                        icon: "success",
+                        text: "Succesfully registered!",
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                    });
+                    this.formReset();
+                    this.exportLoading = false;
                 })
-                .catch(function (error) {
+                .catch((error) => {
+                      this.exportLoading = false;
                     console.log(error);
                 });
-            }
+            },
+
+            registerConfirmation(){
+                swalConfirmation().then((result) => {
+                    if (result.isConfirmed) {
+                       this.register()
+                    }
+                });
+            },
         },
+
         mounted(){
             console.log(this.$refs.formWizard,'form wizard');
-        }
+        },
+
+        watch: {
+            exportLoading(newValue, oldValue) {
+                if (newValue) {
+                    SwalDefault.fire({
+                        title: '<i class="fa fa-cog fa-spin"></i>&nbsp;Saving...',
+                        text: "Saving changes, kindly wait.",
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                    });
+                }else{
+                    SwalDefault.close()
+                }
+            }
+        },
     }
 </script>
 

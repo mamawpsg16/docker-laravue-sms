@@ -12,11 +12,8 @@ const router = createRouter({
     },
 })
 
-NProgress.configure({ showSpinner: true, easing: 'ease', speed: 500 });
+NProgress.configure({ showSpinner: false, easing: 'ease', speed: 500 });
 
-NProgress.configure({
-    template: "<div  role='bar'>...</div>"
-  });
 // GOOD
 // This is a navigation guard in Vue Router. It runs before each navigation.
 router.beforeEach(async (to, from, next) => {
@@ -46,6 +43,5 @@ router.beforeEach(async (to, from, next) => {
 
 router.afterEach((to, from) => {
     NProgress.done();
-    console.log('WTF');
 });
 export default router;

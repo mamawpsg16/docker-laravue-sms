@@ -20,11 +20,12 @@ use App\Http\Controllers\StudentController;
 */
 Route::middleware('auth:sanctum')->group(function(){
     Route::get('/user', [AuthenticationController::class, 'tokenVerification'])->middleware('user.authenticated');
+    Route::post('/logout',[AuthenticationController::class,'logout']); 
 
     Route::apiResources([
         'genders' => GenderController::class,
         'guardian-types' => GuardianTypeController::class,
-        'student-registration' => StudentController::class,
+        'student' => StudentController::class,
         'school-years' => SchoolYearController::class,
     ]);
     Route::get('/genderOptions', [GenderController::class,'getGenders']);

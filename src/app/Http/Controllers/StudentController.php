@@ -18,7 +18,11 @@ class StudentController extends Controller
      */
     public function index()
     {
-        $students = Student::get()->toArray();
+        $students = Student::select('id','email','gender_id','id','first_name','middle_name','last_name','date_of_birth','phone_number_1','image')
+        ->with(['gender:id,name','enrollments:student_id,school_year_id,status','enrollments.school_year:id,name', 'address:student_id,address'])
+        ->get()
+        ->toArray();
+        
         return response(['students' => $students]);        
     }
 
@@ -27,19 +31,22 @@ class StudentController extends Controller
      */
     public function store(StudentRequest $request)
     {
+        
         // Retrieve the validated input data...
-        $data = $request->validated();
+        $student = $this->service->store($request);
 
-        $student = $this->service->store($data);
-        dd($student);
+        return response(['status' => 200, 'student' => $student]);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        $student = Student::select('id','email','gender_id','id','first_name','middle_name','last_name','date_of_birth','phone_number_1','image')
+        ->with(['gender:id,name','enrollments:student_id,school_year_id,status','enrollments.school_year:id,name', 'address:student_id,address', 'guardians', 'health_information'])
+        ->findOrFail($id);
+        dd($student->toArray());
     }
 
     /**

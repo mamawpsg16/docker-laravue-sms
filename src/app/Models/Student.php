@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Gender;
 use App\Models\Address;
 use App\Models\Guardian;
 use App\Models\Enrollment;
@@ -16,12 +17,14 @@ class Student extends Model
 
     protected $guarded = ['id'];
 
+    protected $appends = ['student_image'];
+
      /**
      * Get the guardians of the student.
      */
     public function guardians()
     {
-        return $this->hasMany(Guardian::class);
+        return $this->belongsToMany(Guardian::class, 'student_guardians', 'student_id', 'guardian_id');
     }
 
     public function enrollments()
@@ -39,4 +42,19 @@ class Student extends Model
         return $this->hasOne(StudentHealthInformation::class);
     }
 
+    public function gender()
+    {
+        return $this->belongsTo(Gender::class, 'gender_id', 'id');
+    }
+
+    public function getStudentImageAttribute()
+    {
+        $image = asset('storage/default_images/profile.png');
+
+        if(isset($this->attributes['image'])){
+            $image  = asset('storage/student_images/'.$this->attributes['image']);
+        }
+
+        return $image;
+    }
 }

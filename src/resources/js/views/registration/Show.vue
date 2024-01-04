@@ -1,0 +1,377 @@
+<template>
+    <Modal class="modal-xl" targetModal="student-details-modal" modaltitle="Student Details" :backdrop="true" :escKey="false">
+        <template #body>
+            <!-- <form-wizard @on-complete="registerConfirmation" finishButtonText="Register" ref="formWizard" subtitle="Student Registration" :validateOnBack="true" color="#3176FF">
+                <tab-content title="Student Information" icon="fa-solid fa-user" :beforeChange="validateStudentDetails">
+                    <div class="row mb-3">
+                        <div class="d-flex flex-column align-items-center text-end">
+                            <img :src="image ?? defaultProfileImage" class="img-fluid mb-4 rounded-circle" style="height: 250px; width: 250px; border: 2px solid #ccc;" alt="Default Profile Image">
+                            <div class="d-flex justify-content-center align-items-center">
+                                <input class="form-control object-fit-cover " type="file" id="formFile" style="width: 250px;" @change="uploadImage" accept="image/*">
+                                <button v-if="image" type="button" class="ms-2 btn btn-sm btn-danger" @click="removeImage"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end mb-3">
+                        <div class="col-3">
+                            <label>School Year <span class="text-danger">*</span></label>
+                            <VueMultiselect :loading="loadingSchoolYears" :disabled="loadingSchoolYears" :class="{ inputInvalidClass : checkInputValidity('student','school_year',['required']) }" v-model="student.school_year" track-by="label" label="label" placeholder="Select S.Y" :allow-empty="false" :options="school_years"></VueMultiselect>
+                            <div  v-if="v$.student.school_year.$dirty" :class="{ 'text-danger': checkInputValidity('student','school_year',['required']) }">
+                                <p v-if="v$.student.school_year.required.$invalid">
+                                    School Year is required.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label>First Name <span class="text-danger">*</span></label>
+                            <Input type="text" v-model="student.first_name" :class="{ inputInvalidClass : checkInputValidity('student','first_name',['required']) }" required   autocomplete="name" />
+                            <div  v-if="v$.student.first_name.$dirty" :class="{ 'text-danger': checkInputValidity('student','first_name',['required']) }">
+                                <p v-if="v$.student.first_name.required.$invalid">
+                                    First Name is required.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <label>Middle Name</label>
+                            <Input type="text" v-model="student.middle_name"/>
+                        </div>
+
+                        <div class="col-4">
+                            <label>Last Name <span class="text-danger">*</span></label>
+                            <Input type="text" v-model="student.last_name" :class="{ inputInvalidClass : checkInputValidity('student','last_name',['required']) }" autocomplete="last_name" required/>
+                            <div  v-if="v$.student.last_name.$dirty" :class="{ 'text-danger': checkInputValidity('student','last_name',['required']) }">
+                                <p v-if="v$.student.last_name.required.$invalid">
+                                    Last Name is required.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label>Email Address <span class="text-danger">*</span></label>
+                            <Input type="email" v-model="student.email" :class="{ inputInvalidClass : checkInputValidity('student','email',['required','email']) }"  required/>
+                            <div v-if="v$.student.email.$dirty" :class="{ 'text-danger': checkInputValidity('student','email',['required','email']) }">
+                                <p v-if="v$.student.email.required.$invalid">
+                                    Email Address is required.
+                                </p>
+                                <p v-if="v$.student.email.email.$invalid">
+                                    Email Address is invalid.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <label>Phone #1 <span class="text-danger">*</span></label>
+                            <Input type="number" step="0.01"  v-model="student.phone_number_1" :class="{ inputInvalidClass : checkInputValidity('student','phone_number_1',['required', 'minLength', 'maxLength']) }"  required autocomplete="name" />
+                            <div  v-if="v$.student.phone_number_1.$dirty" :class="{ 'text-danger':  checkInputValidity('student','phone_number_1',['required', 'minLength', 'maxLength']) }">
+                                <p v-if="v$.student.phone_number_1.required.$invalid">
+                                    Phone number is required.
+                                </p>
+                                <p v-if="v$.student.phone_number_1.minLength.$invalid">
+                                    Phone number must be at least 11 characters.
+                                </p>
+                                <p v-if="v$.student.phone_number_1.maxLength.$invalid">
+                                    Phone number must be no more than 13 characters.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <label for="student_last_name" >Phone #2</label>
+                            <Input type="number" step="0.01" v-model="student.phone_number_2" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label>Gender <span class="text-danger">*</span></label>
+                            <VueMultiselect  :loading="loadingGenders" :disabled="loadingGenders" :class="{ inputInvalidClass : checkInputValidity('student','gender',['required']) }" v-model="student.gender" track-by="label" label="label" placeholder="Select Gender" :allow-empty="false" :options="genders"></VueMultiselect>
+                            <div  v-if="v$.student.gender.$dirty" :class="{ 'text-danger': checkInputValidity('student','gender',['required']) }">
+                                <p v-if="v$.student.gender.required.$invalid">
+                                    Gender is required.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <label>Date of Birth <span class="text-danger">*</span></label>
+                            <VueDatePicker  :class="{ inputInvalidClass : checkInputValidity('student','date_of_birth',['required']) }"  v-model="student.date_of_birth" placeholder="Select Date of Birth" format="MM-dd-yyyy" required></VueDatePicker>
+                            <div  v-if="v$.student.date_of_birth.$dirty" :class="{ 'text-danger':  checkInputValidity('student','date_of_birth',['required']) }">
+                                <p v-if="v$.student.date_of_birth.required.$invalid">
+                                    Date of Birth is required.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </tab-content>
+                <tab-content title="Guardian Information" icon="fa-solid fa-hands-holding-child" :beforeChange="validateGuardianDetails">
+                    <div class="row mt-2">
+                        <div class="col-12 text-end">
+                            <button type="button" @click="addGuardian"  class="btn btn-primary text-end me-2">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div v-for="(guardian, index) in guardians" :key="index" class="row align-items-center">
+                        <h2 class="mb-3">{{ guardians[index].guardian_type?.label }}</h2>   
+                        <div v-for="(property, key) in guardian" :key="key" class="col-4 mb-3">
+                            <label>{{ guardians_label_options[key].label }}  <span class="text-danger" v-if="guardians_label_options[key].required">*</span></label>
+                            <Input :type="!key.includes('phone') ? 'text' : 'number'" v-model="guardians[index][key]" v-if="!['guardian_type'].includes(key) && !guardians_label_options[key].required"/>
+                            <Input :type="!key.includes('phone') ? 'text' : 'number'" v-model="guardians[index][key]" v-if="!['guardian_type'].includes(key) &&  guardians_label_options[key].required" :class="{ inputInvalidClass : checkLoopInputValidity('guardians', key, guardians_label_options[key].validations, index)}"/>
+                            <VueMultiselect v-if="['guardian_type'].includes(key)" v-model="guardians[index].guardian_type" :class="{ inputInvalidClass : checkLoopInputValidity('guardians', key, guardians_label_options[key].validations, index)}"  track-by="label" label="label" :placeholder="`Select ${guardians_label_options[key].label}`" :allow-empty="false" :options="relationships"></VueMultiselect>
+                            <template v-if="guardians_label_options[key].required">
+                                <div  v-if="v$.guardians[index][key].$dirty" :class="{ 'text-danger':  checkLoopValidationErrors('guardians', key, guardians_label_options[key].validations, index)?.length }">
+                                    <span v-for="error in checkLoopValidationErrors('guardians', key, guardians_label_options[key].validations, index)" :key="error">
+                                        <span v-if="error == 'required'">
+                                            {{ guardians_label_options[key].label }} is required.
+                                        </span>
+                                        <span v-if="error == 'minLength'">
+                                            {{ guardians_label_options[key].label }} must be at least 11 characters.
+                                        </span>
+                                        <span v-if="error == 'maxLength'">
+                                            {{ guardians_label_options[key].label }} must be no more than 13 characters.
+                                        </span>
+                                        <span v-if="error == 'email'">
+                                            {{ guardians_label_options[key].label }} is invalid.
+                                        </span>
+                                    </span>
+                                </div>
+                            </template>
+                        </div>
+                        <div class="col-3">
+                          <br>
+                          <button @click="deleteGuardian(index)" v-if="index != 0" type="button" class="btn btn-sm btn-primary">
+                            <i class="fa-solid fa-minus"></i>
+                          </button>
+                        </div>
+                    </div>
+                </tab-content>
+                <tab-content title="Address Information" icon="fa-solid fa-location-dot" :beforeChange="validateAddressDetails">
+                   <div class="row mb-3">
+                        <div class="col-12">
+                            <label>Address <span class="text-danger">*</span></label>
+                            <textarea class="form-control" v-model="address_information.address" :class="{ inputInvalidClass : checkInputValidity('address_information','address',['required']) }" placeholder="Address..." id="floatingTextarea" rows="5" required></textarea>
+                            <div  v-if="v$.address_information.address.$dirty" :class="{ 'text-danger':  checkInputValidity('address_information','address',['required'])}">
+                                <p v-if="v$.address_information.address.required.$invalid">
+                                    Address is required.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                   <div class="row mb-3">
+                        <div class="col-4">
+                            <label>Landmark <span class="text-danger">*</span></label>
+                            <Input type="email" v-model="address_information.landmark" :class="{ inputInvalidClass : checkInputValidity('address_information','landmark',['required']) }" required/>
+                            <div  v-if="v$.address_information.landmark.$dirty" :class="{ 'text-danger':  checkInputValidity('address_information','landmark',['required'])}">
+                                <p v-if="v$.address_information.landmark.required.$invalid">
+                                    Landmark is required.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <label>Contact Person <span class="text-danger">*</span></label>
+                            <Input type="email" v-model="address_information.contact_person" :class="{ inputInvalidClass : checkInputValidity('address_information','contact_person',['required']) }"  required/>
+                            <div  v-if="v$.address_information.contact_person.$dirty" :class="{ 'text-danger':  checkInputValidity('address_information','contact_person',['required'])}">
+                                <p v-if="v$.address_information.contact_person.required.$invalid">
+                                    Contact person is required.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <label>Phone # <span class="text-danger">*</span></label>
+                            <Input type="number" step="0.1" v-model="address_information.phone_number"  :class="{ inputInvalidClass : checkInputValidity('address_information','phone_number',['required','minLength','maxLength']) }" required/>
+                            <div  v-if="v$.address_information.phone_number.$dirty" :class="{ 'text-danger':  checkInputValidity('address_information','phone_number',['required','minLength','maxLength'])}">
+                                <p v-if="v$.address_information.phone_number.required.$invalid">
+                                    Phone number is required.
+                                </p>
+                                <p v-if="v$.address_information.phone_number.minLength.$invalid">
+                                    Phone number must be at least 11 characters.
+                                </p>
+                                <p v-if="v$.address_information.phone_number.maxLength.$invalid">
+                                    Phone number must be no more than 13 characters.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </tab-content>
+                <tab-content title="Health Information" icon="fa-solid fa-notes-medical">
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label>Height <code>(cm)</code></label>
+                            <Input type="number" step="0.1" v-model="health_information.height"/>
+                        </div>
+                        <div class="col-4">
+                            <label>Weight <code>(cm)</code></label>
+                            <Input type="number" step="0.1" v-model="health_information.weight"/>
+                        </div>
+                        <div class="col-4">
+                            <label>Blood Type</label>
+                            <Input type="text" v-model="health_information.blood_type" :class="{ inputInvalidClass : checkInputValidity('health_information','blood_type',['maxLength']) }"/>
+                            <div  v-if="v$.health_information.blood_type.$dirty" :class="{ 'text-danger':  checkInputValidity('health_information','blood_type',['maxLength'])}">
+                                <p v-if="v$.health_information.blood_type.maxLength.$invalid">
+                                    Blood Type must be no more than 5 characters.
+                                </p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label>Allergies</label>
+                            <Input type="text" v-model="health_information.allergies"/>
+                        </div>
+                        <div class="col-4">
+                            <label>Medications</label>
+                            <Input type="text" v-model="health_information.medications"/>
+                        </div>
+                        <div class="col-4">
+                            <label>Emergency Contact Person</label>
+                            <Input type="text" v-model="health_information.emergency_contact_person"/>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label>Emergency Contact #</label>
+                            <Input type="number" v-model="health_information.emergency_contact_number"/>
+                        </div>
+                        <div class="col-4">
+                            <label>Last checkup</label>
+                            <Input type="text" v-model="health_information.last_checkup"/>
+                        </div>
+                    </div>
+                </tab-content>
+            </form-wizard> -->
+        </template>
+    </Modal>
+</template>
+
+<script>
+import Modal from '@/components/Modal/modal.vue';
+import Input from '@/components/Form/Input.vue'
+import {FormWizard, TabContent} from 'vue3-form-wizard'
+    export default {
+        name:'Student Details',
+        props:['student_id'],
+        data(){
+            return{
+                image:null,
+                student:{
+                    first_name:null,
+                    middle_name:null,
+                    last_name:null,
+                    email:null,
+                    phone_number_1:null,
+                    phone_number_2:null,
+                    date_of_birth:null,
+                    gender:null,
+                    school_year:null,
+                },
+                guardians:[
+                    {
+                        first_name:null,
+                        middle_name:null,
+                        last_name:null,
+                        email:null,
+                        phone_number_1:null,
+                        phone_number_2:null,
+                        guardian_type:null,
+                    }
+                ],
+                guardians_label_options:{
+                    first_name:{
+                        label:'First Name',
+                        validations:['required'],
+                        required: true,
+                    },
+                    middle_name:{
+                        label:'Middle Name',
+                        required: false,
+                    },
+                    last_name:{
+                        label:'Last Name',
+                        validations:['required'],
+                        required: true,
+                    },
+                    email:{
+                        label:'Email Address',
+                        validations:['required','email'],
+                        required: true,
+                    },
+                    phone_number_1:{
+                        label:'Phone #1',
+                        validations:['required','maxLength','minLength'],
+                        required: true,
+                    },
+                    phone_number_2:{
+                        label:'Phone #2',
+                        required: false,
+                    },
+                    guardian_type:{
+                        label:'Relationship',
+                        validations:['required'],
+                        required: true,
+                    }
+                },
+                address_information:{
+                    address:null,
+                    landmark:null,
+                    contact_person:null,
+                    phone_number:null,
+                },
+                health_information:{
+                    height:null,
+                    weight:null,
+                    blood_type:null,
+                    allergies:null,
+                    medications:null,
+                    emergency_contact_person:null,
+                    emergency_contact_number:null,
+                    last_checkup:null,
+                },
+                auth_token:`Bearer ${localStorage.getItem('auth-token')}`
+            }
+        },
+       
+        components:{
+            Modal,
+            FormWizard,
+            TabContent,
+        },
+
+        methods:{
+
+            async getStudentDetails(){
+                await axios.get(`/api/student/${this.student_id}`, {
+                    headers:{
+                        Authorization: this.auth_token
+                    }
+                }).then((response) => {
+                    console.log(response);
+                }).catch((error) => {
+                    console.log(error)
+                });
+            }
+        },
+        
+        watch: {
+            student_id(id) {
+                this.getStudentDetails();
+
+                immediate: true
+            }
+        },
+    }
+</script>
+
+<style scoped>
+.inputInvalidClass {
+  border: 1px solid red; /* Adjust the style as needed */
+  border-radius: 5px;
+}
+
+</style>
