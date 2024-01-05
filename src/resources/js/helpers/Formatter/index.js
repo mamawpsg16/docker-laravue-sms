@@ -18,10 +18,12 @@ const numberDefaultOptions = {
 
 export const formatDate = function(locale = undefined, date = '', format="timestamp" ) {
     
-    date = !date ? new Date() : new Date(date);
+    if(!date){
+        return null;
+    }
     const newOptions = format == 'date' ? dateDefaultOptions : {...dateDefaultOptions, ...timestamp};
 
-    return new Intl.DateTimeFormat(locale,newOptions).format(date)
+    return new Intl.DateTimeFormat(locale,newOptions).format(new Date(date))
 }
 export const formatCurrency = function (locale =undefined, amount = '0.00',  options = {}) {
     const style = Object.keys(options).length === 0  ? numberDefaultOptions : {...numberDefaultOptions, ...options};

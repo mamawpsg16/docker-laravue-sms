@@ -15,7 +15,7 @@
                 </div>
                 <div class="col-3">
                     <label for="exampleInputPassword1" class="form-label">Password</label>
-                    <input required type="password" v-model="password" @click="clearFormErrors" :class="{ inputInvalidClass : checkInputValidity(undefined,'password',['required', 'minLength']) }" class="form-control"  autocomplete="password" >
+                    <input required type="password" v-model="password" @click="clearFormErrors" :class="{ inputInvalidClass : checkInputValidity(undefined,'password',['required', 'minLength']) }" class="form-control"  autocomplete="current-password" >
                     <div  v-if="v$.password.$dirty" :class="{ 'text-danger': checkInputValidity(undefined,'password',['required', 'minLength']) }">
                         <p v-if="v$.password.required.$invalid">
                             Password is required

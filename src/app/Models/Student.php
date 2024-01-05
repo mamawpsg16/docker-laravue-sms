@@ -8,6 +8,7 @@ use App\Models\Guardian;
 use App\Models\Enrollment;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\StudentHealthInformation;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Student extends Model
@@ -34,7 +35,7 @@ class Student extends Model
 
     public function address()
     {
-        return $this->hasMany(Address::class);
+        return $this->hasOne(Address::class);
     }
 
     public function health_information()
@@ -47,14 +48,22 @@ class Student extends Model
         return $this->belongsTo(Gender::class, 'gender_id', 'id');
     }
 
-    public function getStudentImageAttribute()
+    // public function getStudentImageAttribute()
+    // {
+    //     $image = url('storage/default_images/profile.png');
+
+    //     if(isset($this->attributes['image'])){
+    //         $image  = url('storage/student_images/'.$this->attributes['image']);
+    //     }
+
+    //     return $image;
+    // }
+
+    protected function studentImage(): Attribute
     {
-        $image = asset('storage/default_images/profile.png');
-
-        if(isset($this->attributes['image'])){
-            $image  = asset('storage/student_images/'.$this->attributes['image']);
-        }
-
-        return $image;
+        $asset =  $this->image ? "/student_images/".$this->image : "/default_images/profile.png";
+        return new Attribute(
+            get: fn () => asset("storage".$asset),
+        );
     }
 }

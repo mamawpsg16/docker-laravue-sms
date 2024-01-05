@@ -258,7 +258,7 @@ import {FormWizard, TabContent} from 'vue3-form-wizard'
 import VueDatePicker from '@vuepic/vue-datepicker';
 import { useVuelidate } from '@vuelidate/core'
 import { required, email, maxLength, minLength } from '@vuelidate/validators';
-import defaultProfile from '../../../../public/storage/default_images/profile.png';
+import defaultProfile from '@/../../public/storage/default_images/profile.png';
 import { swalConfirmation, swalSuccess, swalError, SwalDefault } from '@/helpers/Notification/sweetAlert.js';
 import { checkValidity, checkLoopValidity, checkLoopErrors } from '@/helpers/Vuelidate/InputValidation.js';
 import VueMultiselect from 'vue-multiselect'

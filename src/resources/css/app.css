@@ -6,6 +6,7 @@
 @import '@vuepic/vue-datepicker/dist/main.css';
 @import 'vue-multiselect/dist/vue-multiselect.css';
 @import "nprogress/nprogress.css";
+@import 'vue-loading-overlay/dist/css/index.css';
 
 body {
     font-family: 'Roboto', sans-serif !important;

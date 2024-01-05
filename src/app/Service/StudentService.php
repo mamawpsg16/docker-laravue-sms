@@ -39,8 +39,6 @@ class StudentService{
              * * PIVOT TABLE WILL BE AUTOMATICALLY FILLED USING CREATE MANY NO NEED FOR ATTACH OR SYNC
             */
             $student->guardians()->createMany($data['guardians']);
-            
-            $student->address()->create($data['student_information']);
 
             $student->health_information()->create($data['health_information']);
 

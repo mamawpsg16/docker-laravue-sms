@@ -1,6 +1,7 @@
 <template>
     <Create/>
-    <Show :student_id="student_id"/>
+    <Show :student_details="student_details"/>
+    <loading v-model:active="isLoading" :is-full-page="fullPage" color="#3176FF" :height="150" :weight="150" :opacity="0.4" loader="dots"/>
     <div class="row">
         <div class="col-10 mx-auto my-2">
             <div class="d-flex justify-content-between mb-2">
@@ -43,14 +44,13 @@
 <script>
 import Create from './Create.vue';
 import Show from './Show.vue';
-// import Show from './Show.vue';
-// import image1 from '../../../assets/images/1.png'
 import Modal from '@/components/Modal/modal.vue';
-import { formatDate, formatCurrency,titleCase } from '@/helpers/Formatter/index.js';
-// import { swalSuccess, swalError, Swal } from '@/composables/sweetAlert.js';
+import { formatDate, titleCase } from '@/helpers/Formatter/index.js';
+import {SwalDefault } from '@/helpers/Notification/sweetAlert.js';
 import axios from 'axios';
 import Dataset from '@/components/Dataset/Index.vue';
-// const auth_token = `Bearer ${localStorage.getItem('auth-token')}`;
+import Loading from 'vue-loading-overlay';
+
     export default {
         name:'Registration Index',
         data(){
@@ -89,15 +89,18 @@ import Dataset from '@/components/Dataset/Index.vue';
                         sort:''
                     }
                 ],
-                student_id:null,
-                auth_token: `Bearer ${localStorage.getItem('auth-token')}`
+                student_details:null,
+                auth_token: `Bearer ${localStorage.getItem('auth-token')}`,
+                isLoading: false,
+                fullPage: false
             }
         },
         components: {
             Dataset,
             Modal,
             Create,
-            Show
+            Show,
+            Loading
         },
         async created(){
             await this.students();
@@ -129,11 +132,56 @@ import Dataset from '@/components/Dataset/Index.vue';
                 });
             },
 
-            viewStudentDetails(student_id){
+            async viewStudentDetails(student_id){
                 const id = document.getElementById('student-details-modal');
                 const modal = bootstrap.Modal.getOrCreateInstance(id);
-                this.student_id = student_id; 
+                this.isLoading = true;
+                await axios.get(`/api/student/${student_id}`, {
+                    headers:{
+                        Authorization: this.auth_token
+                    }
+                }).then((response) => {
+                    const { student } = response.data;
+                    console.log(student,'student');
+                    
+                    const middle_name = student.middle_name ? `${ titleCase(student.middle_name)}.` : '';
+                    const birth_date = formatDate(undefined, student.date_of_birth, 'date');
+                    
+                    this.student_details = {
+                            ...student,
+                            name: `${ titleCase(student.first_name)} ${middle_name} ${ titleCase(student.last_name) }`,
+                            health_information:{
+                                ...student.health_information,
+                                last_health_checkup: formatDate(undefined, student.health_information.last_health_checkup, 'date'),
+                            },
+                            basic_information:{
+                                first_name:  student.first_name,
+                                middle_name: student.middle_name,
+                                last_name: student.last_name,
+                                email: student.email,
+                                phone_number_1:student.phone_number_1,
+                                phone_number_2:student.phone_number_2,
+                                date_of_birth:student.date_of_birth,
+                                date_of_birth_name: birth_date,
+                                gender_name: student.gender.name,
+                                school_year_name: student.enrollments[0].school_year.name,
+                                school_year: {
+                                    label:student.enrollments[0].school_year.name,
+                                    value:student.enrollments[0].school_year.id
+                                },
+                                gender: {
+                                    label:student.gender.name,
+                                    value:student.gender.id,
+                                },
+                            }
+                    }; 
+
+                }).catch((error) => {
+                    console.log(error)
+                });
+                this.isLoading = false;
                 modal.show();
+               
             }
         },
     }
