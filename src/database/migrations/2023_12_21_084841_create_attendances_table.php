@@ -21,6 +21,9 @@ return new class extends Migration
             $table->date('date')->nullable();
             $table->time('period_start')->nullable();
             $table->time('period_end')->nullable();
+            $table->boolean('active')->default(true);
+            $table->string('created_by',100)->nullable();
+            $table->string('updated_by',100)->nullable();
             $table->timestamps();
 
             $table->index('student_id');

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('students', function (Blueprint $table) {
             $table->id();
             $table->foreignId('gender_id')->constrained();
+            $table->string('image',100)->nullable();
             $table->string('email',100)->unique();
             $table->string('first_name',100);
             $table->string('middle_name',100)->nullable();
@@ -21,10 +22,9 @@ return new class extends Migration
             $table->date('date_of_birth');
             $table->string('phone_number_1',15);
             $table->string('phone_number_2',15)->nullable();
-            $table->string('emergency_contact_1',15);
-            $table->string('emergency_contact_2',15)->nullable();
-            $table->string('created_by',100);
-            $table->string('updated_by',100);
+            $table->boolean('active')->default(true);
+            $table->string('created_by',100)->nullable();
+            $table->string('updated_by',100)->nullable();
             $table->timestamps();
 
             $table->index('gender_id');

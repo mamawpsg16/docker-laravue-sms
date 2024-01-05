@@ -5,7 +5,6 @@
  */
 
 import axios from 'axios';
-import 'bootstrap/dist/css/bootstrap.css';
 import * as bootstrap from 'bootstrap';
 window.bootstrap = bootstrap;
 window.axios = axios;

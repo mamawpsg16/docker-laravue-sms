@@ -14,13 +14,19 @@ return new class extends Migration
         Schema::create('enrollments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->constrained();
+            $table->foreignId('school_year_id')->nullable()->constrained();
             $table->foreignId('class_id')->nullable()->constrained();
-            $table->dateTime('enrollment_date')->nullable();
+            $table->enum('status', ['Pending', 'Assessment', 'Approved'])->default('Pending');
+            $table->date('date')->nullable();
+            $table->string('created_by',100)->nullable();
+            $table->string('updated_by',100)->nullable();
             $table->timestamps();
 
             $table->index('student_id');
             $table->index('class_id');
-            $table->index('enrollment_date');
+            $table->index('school_year_id');
+            $table->index('date');
+            $table->index('status');
         });
     }
 

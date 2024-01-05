@@ -18,8 +18,9 @@ return new class extends Migration
             $table->integer('term');
             $table->date('start_date');
             $table->date('end_date');
-            $table->string('created_by',100);
-            $table->string('updated_by',100);
+            $table->boolean('active')->default(true);
+            $table->string('created_by',100)->nullable();
+            $table->string('updated_by',100)->nullable();
             $table->timestamps();
 
             $table->index('name');

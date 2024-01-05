@@ -14,8 +14,9 @@ return new class extends Migration
             Schema::create('genders', function (Blueprint $table) {
                 $table->id();
                 $table->string('name',100)->unique();
-                $table->string('created_by');
-                $table->string('updated_by');
+                $table->boolean('active')->default(true);
+                $table->string('created_by')->nullable();
+                $table->string('updated_by')->nullable();
                 $table->timestamps();
 
                 $table->index('name');
