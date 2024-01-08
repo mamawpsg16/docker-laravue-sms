@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Student;
+use Illuminate\Http\Request;
 use App\Service\StudentService;
-use App\Http\Requests\StudentRequest;
+use App\Http\Requests\Registration\RegistrationRequest;
 
 class StudentController extends Controller
 {
@@ -29,7 +29,7 @@ class StudentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StudentRequest $request)
+    public function store(RegistrationRequest $request)
     {
         
         // Retrieve the validated input data...
@@ -48,29 +48,38 @@ class StudentController extends Controller
             'gender:id,name',
             'enrollments:student_id,school_year_id',
             'enrollments.school_year:id,name',
-            'address:student_id,address,land_mark,contact_person,phone_number',
+            'address:student_id,address,landmark,contact_person,phone_number',
             'guardians:guardian_type_id,first_name,middle_name,last_name,email,phone_number_1,phone_number_2',
-            'guardians.guardian_type:id,name',
+            'guardians.guardian_type' => function($query){
+                $query->select(['id', 'name as label', 'id as value']);
+            },
             'health_information:student_id,height,weight,blood_type,allergies,medications,emergency_contact_name,emergency_contact_phone,last_health_checkup'])
         ->findOrFail($id)
         ->toArray();
-
         return response(['student' => $student]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(RegistrationRequest $request)
     {
-        //
+
+        $student = $this->service->update($request);
+
+        return response(['status' => 200, 'student' => $student]);
+
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Student $student)
     {
-        //
+
+        $student = $this->service->destroy($student);
+
+        return response(['status' => 200, 'message' => 'Successfully deleted']);
     }
 }

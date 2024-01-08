@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Registration;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StudentRequest extends FormRequest
+class UpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,10 +22,15 @@ class StudentRequest extends FormRequest
      */
     public function rules(): array
     {
+        if($this->route()->uri == 'api/update-student'){
+            $unique = Rule::unique('students', 'email')->ignore(optional($this->student_information)['id']);
+
+        } 
+
         return [
             'image' => ['sometimes', 'image','nullable','mimes:jpeg,jpg,png'],
             'student_information' => ['required','array'],
-            'student_information.email' => ['required', 'email'],
+            'student_information.email' => ['required', 'email',$unique],
             'student_information.first_name' => 'required',
             'student_information.last_name' => 'required',
             'student_information.phone_number_1' => ['required','min:11', 'max:13'],

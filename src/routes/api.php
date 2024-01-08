@@ -32,4 +32,6 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::get('/guardianTypeOptions', [GuardianTypeController::class,'getGuardianTypes']);
     Route::get('/schoolYearOptions', [SchoolYearController::class,'getSchoolYears']);
 
+    Route::post('/update-student', [StudentController::class,'update']);
+
 });

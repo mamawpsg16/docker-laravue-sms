@@ -10,7 +10,6 @@ export const deepClone = function(obj) {
     
     // Iterate over all properties of the obj
     for (let key in obj) {
-        console.log(Array.isArray(obj),typeof obj);
       // Recursively deep clone each property and assign it to the copy
       copy[key] = deepClone(obj[key]);
     }

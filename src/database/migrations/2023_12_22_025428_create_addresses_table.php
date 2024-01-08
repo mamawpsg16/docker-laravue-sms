@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('student_id')->nullable();
             $table->string('address',100)->nullable();
-            $table->string('land_mark',10)->nullable();
+            $table->string('landmark',100)->nullable();
             $table->string('contact_person',100)->nullable();
             $table->string('phone_number',100)->nullable();
             $table->boolean('active')->default(true);

@@ -284,7 +284,7 @@ import VueMultiselect from 'vue-multiselect'
                     gender:null,
                     school_year:null,
                 },
-                exportLoading:false,
+                isSaving:false,
                 genders:[],
                 relationships:[],
                 school_years:[],
@@ -376,7 +376,6 @@ import VueMultiselect from 'vue-multiselect'
                     guardian_type: { required },
                 })),
                 address_information: {
-                    address: { required },
                     address: { required },
                     landmark: { required },
                     contact_person: { required },
@@ -574,7 +573,7 @@ import VueMultiselect from 'vue-multiselect'
                     return;
                 }
 
-                this.exportLoading = true;
+                this.isSaving = true;
 
                 const formData = new FormData();
 
@@ -621,18 +620,17 @@ import VueMultiselect from 'vue-multiselect'
                     }
                 })
                 .then((response) => {
+                    this.isSaving = false;
+                    this.formReset();
                     SwalDefault.fire({
                         icon: "success",
                         text: "Succesfully registered!",
                         showConfirmButton: false,
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
                     });
-                    this.formReset();
-                    this.exportLoading = false;
+                    SwalDefault.close()
                 })
                 .catch((error) => {
-                      this.exportLoading = false;
+                      this.isSaving = false;
                     console.log(error);
                 });
             },
@@ -651,7 +649,7 @@ import VueMultiselect from 'vue-multiselect'
         },
 
         watch: {
-            exportLoading(newValue, oldValue) {
+            isSaving(newValue, oldValue) {
                 if (newValue) {
                     SwalDefault.fire({
                         title: '<i class="fa fa-cog fa-spin"></i>&nbsp;Saving...',
@@ -660,8 +658,6 @@ import VueMultiselect from 'vue-multiselect'
                         allowOutsideClick: false,
                         allowEscapeKey: false,
                     });
-                }else{
-                    SwalDefault.close()
                 }
             }
         },

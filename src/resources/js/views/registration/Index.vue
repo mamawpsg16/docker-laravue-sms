@@ -33,7 +33,10 @@
                         <td>{{ data.gender }}</td>
                         <td>{{ data.school_year }}</td>
                         <td>{{ data.enrollment_status }}</td>
-                        <td class="text-center"><button class="btn btn-sm btn-primary" @click="viewStudentDetails(data.id)"><i class="fa-solid fa-eye"></i></button></td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-primary me-2" @click="viewStudentDetails(data.id)"><i class="fa-solid fa-eye"></i></button>
+                            <button class="btn btn-sm btn-danger" @click="deleteConfirmation(data.id, index)"><i class="fa-solid fa-trash"></i></button>
+                        </td>
                     </tr>
                 </template>
             </Dataset>
@@ -46,7 +49,7 @@ import Create from './Create.vue';
 import Show from './Show.vue';
 import Modal from '@/components/Modal/modal.vue';
 import { formatDate, titleCase } from '@/helpers/Formatter/index.js';
-import {SwalDefault } from '@/helpers/Notification/sweetAlert.js';
+import {SwalDefault, swalConfirmation } from '@/helpers/Notification/sweetAlert.js';
 import axios from 'axios';
 import Dataset from '@/components/Dataset/Index.vue';
 import Loading from 'vue-loading-overlay';
@@ -142,7 +145,6 @@ import Loading from 'vue-loading-overlay';
                     }
                 }).then((response) => {
                     const { student } = response.data;
-                    console.log(student,'student');
                     
                     const middle_name = student.middle_name ? `${ titleCase(student.middle_name)}.` : '';
                     const birth_date = formatDate(undefined, student.date_of_birth, 'date');
@@ -164,6 +166,7 @@ import Loading from 'vue-loading-overlay';
                                 date_of_birth:student.date_of_birth,
                                 date_of_birth_name: birth_date,
                                 gender_name: student.gender.name,
+                                id: student.id,
                                 school_year_name: student.enrollments[0].school_year.name,
                                 school_year: {
                                     label:student.enrollments[0].school_year.name,
@@ -182,7 +185,35 @@ import Loading from 'vue-loading-overlay';
                 this.isLoading = false;
                 modal.show();
                
-            }
+            },
+
+            delete(student_id){
+                axios.delete(`/api/student/${student_id}`,{
+                    headers: {
+                        Authorization: this.auth_token
+                    }
+                }).then((response)=>{
+                    const { message } = response.data;
+                    this.data = this.data.splice(index, 1);
+                    
+                    SwalDefault.fire({
+                        icon: "success",
+                        text: message,
+                        showConfirmButton: false,
+                    });
+                    SwalDefault.close()
+                }).catch(error =>{
+
+                });
+            },
+
+            deleteConfirmation(student_id, index){
+                swalConfirmation().then((result) => {
+                    if (result.isConfirmed) {
+                       this.delete(student_id)
+                    }
+                });
+            },
         },
     }
 </script>

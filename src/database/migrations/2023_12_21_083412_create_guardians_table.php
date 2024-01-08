@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('guardians', function (Blueprint $table) {
             $table->id();
             $table->foreignId('guardian_type_id')->constrained();
-            $table->string('email',100)->unique();
+            $table->string('email',100);
             $table->string('first_name',100);
             $table->string('middle_name',100)->nullable();
             $table->string('last_name',100);
